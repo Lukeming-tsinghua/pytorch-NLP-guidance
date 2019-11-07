@@ -6,7 +6,7 @@ from torchtext.vocab import Vectors
 
 def tokenizer(text): # create a tokenizer function
     regex = re.compile(r'[^\u4e00-\u9fa5aA-Za-z0-9]')
-    text = regex.sub(' ', text)
+    text = re.sub(regex,' ',text)
     return [word for word in jieba.cut(text) if word.strip()]
 
 # 去停用词
