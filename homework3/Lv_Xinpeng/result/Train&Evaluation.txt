@@ -1,0 +1,91 @@
+加载数据完成
+Batch[100] - loss: 0.694755  acc: 50.7812%(65/128)
+Evaluation - loss: 0.000100  acc: 50.9714%(3568/7000) 
+
+Saving best model, acc: 50.9714%
+
+Batch[200] - loss: 0.696014  acc: 45.3125%(58/128)
+Evaluation - loss: 0.000100  acc: 50.9857%(3569/7000) 
+
+Saving best model, acc: 50.9857%
+
+Batch[300] - loss: 0.772481  acc: 41.4062%(53/128)
+Evaluation - loss: 0.000104  acc: 49.0143%(3431/7000) 
+
+Batch[400] - loss: 0.689278  acc: 56.2500%(72/128)
+Evaluation - loss: 0.000099  acc: 49.0143%(3431/7000) 
+
+Batch[500] - loss: 0.698502  acc: 47.6562%(61/128)
+Evaluation - loss: 0.000099  acc: 50.9571%(3567/7000) 
+
+Batch[600] - loss: 0.515858  acc: 81.2500%(104/128)
+Evaluation - loss: 0.000071  acc: 81.9571%(5737/7000) 
+
+Saving best model, acc: 81.9571%
+
+Batch[700] - loss: 0.268912  acc: 90.6250%(116/128)
+Evaluation - loss: 0.000036  acc: 90.5714%(6340/7000) 
+
+Saving best model, acc: 90.5714%
+
+Batch[800] - loss: 0.179880  acc: 91.4062%(117/128)
+Evaluation - loss: 0.000028  acc: 92.9143%(6504/7000) 
+
+Saving best model, acc: 92.9143%
+
+Batch[900] - loss: 0.155915  acc: 96.0938%(123/128)
+Evaluation - loss: 0.000027  acc: 92.9143%(6504/7000) 
+
+Batch[1000] - loss: 0.162030  acc: 94.5312%(121/128)
+Evaluation - loss: 0.000025  acc: 93.4714%(6543/7000) 
+
+Saving best model, acc: 93.4714%
+
+Batch[1100] - loss: 0.151315  acc: 95.3125%(122/128))
+Evaluation - loss: 0.000025  acc: 93.3857%(6537/7000) 
+
+Batch[1200] - loss: 0.095064  acc: 96.0938%(123/128)
+Evaluation - loss: 0.000023  acc: 94.0714%(6585/7000) 
+
+Saving best model, acc: 94.0714%
+
+Batch[1300] - loss: 0.164293  acc: 94.5312%(121/128)
+Evaluation - loss: 0.000022  acc: 94.3714%(6606/7000) 
+
+Saving best model, acc: 94.3714%
+
+Batch[1400] - loss: 0.084592  acc: 96.0938%(123/128)
+Evaluation - loss: 0.000023  acc: 94.2857%(6600/7000) 
+
+Batch[1500] - loss: 0.125937  acc: 93.7500%(120/128))
+Evaluation - loss: 0.000023  acc: 94.3143%(6602/7000) 
+
+Batch[1600] - loss: 0.104362  acc: 96.0938%(123/128))
+Evaluation - loss: 0.000023  acc: 94.3286%(6603/7000) 
+
+Batch[1700] - loss: 0.071356  acc: 97.6562%(125/128)
+Evaluation - loss: 0.000023  acc: 94.4714%(6613/7000) 
+
+Saving best model, acc: 94.4714%
+
+Batch[1800] - loss: 0.110362  acc: 97.6562%(125/128))
+Evaluation - loss: 0.000023  acc: 94.2571%(6598/7000) 
+
+Batch[1900] - loss: 0.121374  acc: 96.0938%(123/128))
+Evaluation - loss: 0.000022  acc: 94.4571%(6612/7000) 
+
+Batch[2000] - loss: 0.069967  acc: 96.0938%(123/128))
+Evaluation - loss: 0.000022  acc: 94.6286%(6624/7000) 
+
+Saving best model, acc: 94.6286%
+
+Batch[2100] - loss: 0.092170  acc: 96.8750%(124/128))
+Evaluation - loss: 0.000022  acc: 94.5714%(6620/7000) 
+
+Batch[2200] - loss: 0.076080  acc: 96.0938%(123/128)
+Evaluation - loss: 0.000022  acc: 94.6000%(6622/7000) 
+
+Batch[2300] - loss: 0.061909  acc: 97.6562%(125/128))
+Evaluation - loss: 0.000023  acc: 94.7429%(6632/7000) 
+
+Saving best model, acc: 94.7429%
