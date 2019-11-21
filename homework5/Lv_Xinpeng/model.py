@@ -29,10 +29,6 @@ class CNN_Text(nn.Module):
         
         self.fc1 = nn.Linear(len(kernel_sizes)*kernel_num, class_num)
         
-    def conv_and_pool(self, x, conv):
-        x = F.relu(conv(x)).squeeze(3) 
-        x = F.max_pool1d(x, x.size(2)).squeeze(2)
-        return x
 
     def forward(self, x):
         '''
