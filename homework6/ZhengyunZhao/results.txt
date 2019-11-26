@@ -1,0 +1,21 @@
+GRU without attention:
+2019-11-26 21:50:46,664 INFO Dev BLEU score: 0.18
+input = on p@@ eu@@ t me faire confiance .
+output = we are getting and ing ing . . <EOS>
+input = j en suis contente .
+output = i m happy . <EOS>
+input = vous etes tres genti@@ ls .
+output = you re very upset . <EOS>
+input = c est mon hero@@ s 
+output = he is my her@@ . . <EOS>
+
+GRU with attention:
+2019-11-26 23:03:48,988 INFO Dev BLEU score: 0.19
+input = on p@@ eu@@ t me faire confiance .
+output = i m going to have . . . <EOS>
+input = j en suis contente .
+output = i m happy happy . <EOS>
+input = vous etes tres genti@@ ls .
+output = you re very rude . <EOS>
+input = c est mon hero@@ s 
+output = he is my her@@ . . <EOS>
