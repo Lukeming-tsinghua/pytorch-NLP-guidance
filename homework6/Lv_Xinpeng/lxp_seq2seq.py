@@ -310,10 +310,9 @@ def train(input_tensor, target_tensor, encoder, decoder, optimizer, criterion, m
 
     target_length = target_tensor.size(0)
 
-    loss = 0
+    loss = 0.
 
     encoder_outputs, encoder_hidden = encoder(input_tensor, encoder_hidden)
-
     decoder_input = torch.tensor([[SOS_index]], device=device)
 
     decoder_hidden = encoder_hidden
@@ -329,7 +328,6 @@ def train(input_tensor, target_tensor, encoder, decoder, optimizer, criterion, m
             break
 
     loss.backward()
-
     optimizer.step()
 
     return loss.item() / target_length
@@ -361,7 +359,6 @@ def translate(encoder, decoder, sentence, src_vocab, tgt_vocab, max_length=MAX_L
         encoder_outputs, encoder_hidden = encoder(input_tensor, encoder_hidden)
 
         decoder_input = torch.tensor([[SOS_index]], device=device)
-
         decoder_hidden = encoder_hidden
 
         decoded_words = []
@@ -389,7 +386,7 @@ def translate(encoder, decoder, sentence, src_vocab, tgt_vocab, max_length=MAX_L
 def translate_sentences(encoder, decoder, pairs, src_vocab, tgt_vocab, max_num_sentences=None, max_length=MAX_LENGTH):
     output_sentences = []
     for pair in pairs[:max_num_sentences]:
-        output_words, attentions = translate(encoder, decoder, pair[0], src_vocab, tgt_vocab)
+        output_words = translate(encoder, decoder, pair[0], src_vocab, tgt_vocab)
         output_sentence = ' '.join(output_words)
         output_sentences.append(output_sentence)
     return output_sentences
