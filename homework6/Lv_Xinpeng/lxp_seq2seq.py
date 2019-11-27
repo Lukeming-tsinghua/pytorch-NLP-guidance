@@ -405,7 +405,7 @@ def translate_random_sentence(encoder, decoder, pairs, src_vocab, tgt_vocab, n=1
         pair = random.choice(pairs)
         print('>', pair[0])
         print('=', pair[1])
-        output_words, attentions = translate(encoder, decoder, pair[0], src_vocab, tgt_vocab)
+        output_words = translate(encoder, decoder, pair[0], src_vocab, tgt_vocab)
         output_sentence = ' '.join(output_words)
         print('<', output_sentence)
         print('')
