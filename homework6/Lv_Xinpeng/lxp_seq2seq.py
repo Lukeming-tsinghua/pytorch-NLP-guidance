@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov 26 16:01:04 2019
+Created on Wed Nov 26 15:50:18 2019
 
 @author: LVXINPENG
 """
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 
 from __future__ import unicode_literals, print_function, division
 
@@ -14,25 +18,26 @@ import time
 from io import open
 
 import matplotlib
-#if you are running on the gradx/ugradx/ another cluster, 
-#you will need the following line
-#if you run on a local machine, you can comment it out
-matplotlib.use('agg') 
+
+# if you are running on the gradx/ugradx/ another cluster,
+# you will need the following line
+# if you run on a local machine, you can comment it out
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from nltk.translate.bleu_score import corpus_bleu
 from torch import optim
+import math
 
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(message)s')
 
 # we are forcing the use of cpu, if you have access to a gpu, you can set the flag to "cuda"
-# make sure you are very careful if you are using a gpu on a shared cluster/grid, 
+# make sure you are very careful if you are using a gpu on a shared cluster/grid,
 # it can be very easy to confict with other people's jobs.
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device = torch.device("cpu")
@@ -48,6 +53,7 @@ MAX_LENGTH = 15
 class Vocab:
     """ This class handles the mapping between the words and their indicies
     """
+
     def __init__(self, lang_code):
         self.lang_code = lang_code
         self.word2index = {}
@@ -70,14 +76,14 @@ class Vocab:
 
 
 ######################################################################
-#%%
+
 
 def split_lines(input_file):
     """split a file like:
     first src sentence|||first tgt sentence
     second src sentence|||second tgt sentence
     into a list of things like
-    [("first src sentence", "first tgt sentence"), 
+    [("first src sentence", "first tgt sentence"),
      ("second src sentence", "second tgt sentence")]
     """
     logging.info("Reading lines of %s...", input_file)
@@ -105,8 +111,8 @@ def make_vocabs(src_lang_code, tgt_lang_code, train_file):
 
     return src_vocab, tgt_vocab
 
+
 ######################################################################
-#%%
 
 def tensor_from_sentence(vocab, sentence):
     """creates a tensor from a raw sentence
@@ -131,7 +137,7 @@ def tensors_from_pair(src_vocab, tgt_vocab, pair):
 
 
 ######################################################################
-#%%
+
 
 class LSTM(nn.Module):
 
@@ -186,11 +192,11 @@ class LSTM(nn.Module):
         F.dropout(h_t, p=self.dropout, inplace=True)
         return h_t, c_t
 
-#%%
 
 class EncoderRNN(nn.Module):
     """the class for the enoder RNN
     """
+
     def __init__(self, input_size, hidden_size):
         super(EncoderRNN, self).__init__()
         self.hidden_size = hidden_size
@@ -202,86 +208,73 @@ class EncoderRNN(nn.Module):
         """
         "*** YOUR CODE HERE ***"
         self.hidden_size = hidden_size
-
         self.embedding = nn.Embedding(input_size, hidden_size)
         self.lstm = LSTM(hidden_size, hidden_size)
-
-        #raise NotImplementedError
-        #return output, hidden
-
 
     def forward(self, input_batch, hidden):
         """runs the forward pass of the encoder
         returns the output and the hidden state
         """
         "*** YOUR CODE HERE ***"
-        
         outputs = torch.zeros(MAX_LENGTH, 2 * self.hidden_size, device=device)
         input_length = input_batch.size(0)
 
         pre_cell = self.get_initial_hidden_state()
         for ei in range(input_length):
-            einput = input_batch[ei]
-            embedded = self.embedding(einput).view(1, 1, -1)
+            input = input_batch[ei]
+            embedded = self.embedding(input).view(1, 1, -1)
             output = embedded
             hidden, pre_cell = self.lstm(output[0], hidden, pre_cell)
             outputs[ei][:self.hidden_size] = hidden[0, 0]
         pre_cell = self.get_initial_hidden_state()
         hidden = self.get_initial_hidden_state()
         for ei in reversed(range(input_length)):
-            einput = input_batch[ei]
-            embedded = self.embedding(einput).view(1, 1, -1)
+            input = input_batch[ei]
+            embedded = self.embedding(input).view(1, 1, -1)
             output = embedded
             hidden, pre_cell = self.lstm(output[0], hidden, pre_cell)
 
             outputs[ei][self.hidden_size:] = hidden[0, 0]
-        
-        #raise NotImplementedError
-        return output, hidden
+        return outputs, hidden
 
     def get_initial_hidden_state(self):
         return torch.zeros(1, 1, self.hidden_size, device=device)
 
-#%%
 
-class DecoderRNN(nn.Module):
-    """the class for the decoder 
+class AttnDecoderRNN(nn.Module):
+    """the class for the decoder
     """
-    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=MAX_LENGTH):
-        super(DecoderRNN, self).__init__()
+
+    def __init__(self, hidden_size, output_size, dropout_p=0.7, max_length=MAX_LENGTH):
+        super(AttnDecoderRNN, self).__init__()
         self.hidden_size = hidden_size
         self.output_size = output_size
         self.dropout_p = dropout_p
         self.max_length = max_length
 
         self.dropout = nn.Dropout(self.dropout_p)
-        
-        """Initilize your word embedding, decoder LSTM here
+
+        """Initilize your word embedding, decoder LSTM, and weights needed for your attention here
         """
         "*** YOUR CODE HERE ***"
         self.embedding = nn.Embedding(self.output_size, self.hidden_size)
         self.dropout = nn.Dropout(self.dropout_p)
 
         self.lstm = LSTM(self.hidden_size, self.hidden_size)
-        
+        self.out = nn.Linear(self.hidden_size, self.output_size)
         self.attention = nn.Linear(self.hidden_size * 2, self.max_length)
         self.attention_combine = nn.Linear(self.hidden_size * 3, self.hidden_size)
         self.softmax = nn.Softmax(dim=1)
         self.relu = nn.ReLU()
-        
-        #raise NotImplementedError
-
-        self.out = nn.Linear(self.hidden_size, self.output_size)
 
     def forward(self, input, hidden, encoder_outputs):
         """runs the forward pass of the decoder
-        returns the log_softmax, hidden state
-        
+        returns the log_softmax, hidden state, and attn_weights
+
         Dropout (self.dropout) should be applied to the word embeddings.
         """
-        
+
         "*** YOUR CODE HERE ***"
-        
         embedded = self.dropout(self.embedding(input).view(1, 1, -1))
 
         attn_weights = self.softmax(self.attention(torch.cat((embedded[0], hidden[0]), 1)))
@@ -296,16 +289,13 @@ class DecoderRNN(nn.Module):
         hidden, cn = self.lstm(output, hidden, cn)
 
         log_softmax = F.log_softmax(self.out(hidden[0]), dim=1)
-        
-        #raise NotImplementedError
-        return log_softmax, hidden
+        return log_softmax, hidden, attn_weights
 
     def get_initial_hidden_state(self):
         return torch.zeros(1, 1, self.hidden_size, device=device)
 
 
 ######################################################################
-#%%
 
 def train(input_tensor, target_tensor, encoder, decoder, optimizer, criterion, max_length=MAX_LENGTH):
     encoder_hidden = encoder.get_initial_hidden_state()
@@ -315,14 +305,17 @@ def train(input_tensor, target_tensor, encoder, decoder, optimizer, criterion, m
     decoder.train()
 
     "*** YOUR CODE HERE ***"
-    
+
     optimizer.zero_grad()
 
     target_length = target_tensor.size(0)
-    loss = 0.
+
+    loss = 0
 
     encoder_outputs, encoder_hidden = encoder(input_tensor, encoder_hidden)
+
     decoder_input = torch.tensor([[SOS_index]], device=device)
+
     decoder_hidden = encoder_hidden
 
     for i in range(target_length):
@@ -338,18 +331,15 @@ def train(input_tensor, target_tensor, encoder, decoder, optimizer, criterion, m
     loss.backward()
 
     optimizer.step()
-    #raise NotImplementedError
 
-    return loss.item() 
-
+    return loss.item() / target_length
 
 
 ######################################################################
-#%%
 
 def translate(encoder, decoder, sentence, src_vocab, tgt_vocab, max_length=MAX_LENGTH):
     """
-    runs tranlsation, returns the output
+    runs tranlsation, returns the output and attention
     """
 
     # switch the encoder and decoder to eval mode so they are not applying dropout
@@ -358,25 +348,29 @@ def translate(encoder, decoder, sentence, src_vocab, tgt_vocab, max_length=MAX_L
 
     with torch.no_grad():
         input_tensor = tensor_from_sentence(src_vocab, sentence)
-        input_length = input_tensor.size()[0]
+        #input_length = input_tensor.size()[0]
         encoder_hidden = encoder.get_initial_hidden_state()
 
-        encoder_outputs = torch.zeros(max_length, encoder.hidden_size, device=device)
+        # encoder_outputs = torch.zeros(max_length, encoder.hidden_size, device=device)
 
-        for ei in range(input_length):
-            encoder_output, encoder_hidden = encoder(input_tensor[ei],
-                                                     encoder_hidden)
-            encoder_outputs[ei] += encoder_output[0, 0]
+        # for ei in range(input_length):
+        #     encoder_output, encoder_hidden = encoder(input_tensor[ei],
+        #                                              encoder_hidden)
+        #     encoder_outputs[ei] += encoder_output[0, 0]
+
+        encoder_outputs, encoder_hidden = encoder(input_tensor, encoder_hidden)
 
         decoder_input = torch.tensor([[SOS_index]], device=device)
 
         decoder_hidden = encoder_hidden
 
         decoded_words = []
+        decoder_attentions = torch.zeros(max_length, max_length)
 
         for di in range(max_length):
-            decoder_output, decoder_hidden = decoder(
+            decoder_output, decoder_hidden, decoder_attention = decoder(
                 decoder_input, decoder_hidden, encoder_outputs)
+            decoder_attentions[di] = decoder_attention.data
             topv, topi = decoder_output.data.topk(1)
             if topi.item() == EOS_index:
                 decoded_words.append(EOS_token)
@@ -390,13 +384,12 @@ def translate(encoder, decoder, sentence, src_vocab, tgt_vocab, max_length=MAX_L
 
 
 ######################################################################
-#%%
 
 # Translate (dev/test)set takes in a list of sentences and writes out their transaltes
 def translate_sentences(encoder, decoder, pairs, src_vocab, tgt_vocab, max_num_sentences=None, max_length=MAX_LENGTH):
     output_sentences = []
     for pair in pairs[:max_num_sentences]:
-        output_words = translate(encoder, decoder, pair[0], src_vocab, tgt_vocab)
+        output_words, attentions = translate(encoder, decoder, pair[0], src_vocab, tgt_vocab)
         output_sentence = ' '.join(output_words)
         output_sentences.append(output_sentence)
     return output_sentences
@@ -412,14 +405,13 @@ def translate_random_sentence(encoder, decoder, pairs, src_vocab, tgt_vocab, n=1
         pair = random.choice(pairs)
         print('>', pair[0])
         print('=', pair[1])
-        output_words = translate(encoder, decoder, pair[0], src_vocab, tgt_vocab)
+        output_words, attentions = translate(encoder, decoder, pair[0], src_vocab, tgt_vocab)
         output_sentence = ' '.join(output_words)
         print('<', output_sentence)
         print('')
 
 
 ######################################################################
-#%%
 
 
 def translate_and_show(input_sentence, encoder1, decoder1, src_vocab, tgt_vocab):
@@ -427,6 +419,7 @@ def translate_and_show(input_sentence, encoder1, decoder1, src_vocab, tgt_vocab)
         encoder1, decoder1, input_sentence, src_vocab, tgt_vocab)
     print('input =', input_sentence)
     print('output =', ' '.join(output_words))
+   
 
 
 def clean(strx):
@@ -438,7 +431,6 @@ def clean(strx):
 
 
 ######################################################################
-#%%
 
 def main():
     ap = argparse.ArgumentParser()
@@ -470,13 +462,15 @@ def main():
                     help='output file for test translations')
     ap.add_argument('--load_checkpoint', nargs=1,
                     help='checkpoint file to start from')
+    ap.add_argument('--fig', default='output.png',
+                    help='output figure for attention')
 
     args = ap.parse_args()
 
     # process the training, dev, test files
 
     # Create vocab from training data, or load if checkpointed
-    # also set iteration 
+    # also set iteration
     if args.load_checkpoint is not None:
         state = torch.load(args.load_checkpoint[0])
         iter_num = state['iter_num']
@@ -489,7 +483,7 @@ def main():
                                            args.train_file)
 
     encoder = EncoderRNN(src_vocab.n_words, args.hidden_size).to(device)
-    decoder = DecoderRNN(args.hidden_size, tgt_vocab.n_words, dropout_p=0.1).to(device)
+    decoder = AttnDecoderRNN(args.hidden_size, tgt_vocab.n_words, dropout_p=0.1).to(device)
 
     # encoder/decoder weights are randomly initilized
     # if checkpointed, load saved weights
@@ -523,6 +517,7 @@ def main():
         loss = train(input_tensor, target_tensor, encoder,
                      decoder, optimizer, criterion)
         print_loss_total += loss
+        # print(loss)
 
         if iter_num % args.checkpoint_every == 0:
             state = {'iter_num': iter_num,
@@ -553,7 +548,7 @@ def main():
             dev_bleu = corpus_bleu(references, candidates)
             logging.info('Dev BLEU score: %.2f', dev_bleu)
 
-    # translate test set and write to file
+     # translate test set and write to file
     translated_sentences = translate_sentences(encoder, decoder, test_pairs, src_vocab, tgt_vocab)
     with open(args.out_file, 'wt', encoding='utf-8') as outf:
         for sent in translated_sentences:
@@ -565,7 +560,5 @@ def main():
     translate_and_show("vous etes tres genti@@ ls .", encoder, decoder, src_vocab, tgt_vocab)
     translate_and_show("c est mon hero@@ s ", encoder, decoder, src_vocab, tgt_vocab)
 
-
 if __name__ == '__main__':
     main()
-
