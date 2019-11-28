@@ -5,10 +5,6 @@ Created on Wed Nov 26 15:50:18 2019
 @author: LVXINPENG
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-
 from __future__ import unicode_literals, print_function, division
 
 import argparse
@@ -207,7 +203,7 @@ class EncoderRNN(nn.Module):
         You should make your LSTM modular and re-use it in the Decoder.
         """
         "*** YOUR CODE HERE ***"
-        self.hidden_size = hidden_size
+        self.input_size = input_size
         self.embedding = nn.Embedding(input_size, hidden_size)
         self.lstm = LSTM(hidden_size, hidden_size)
 
