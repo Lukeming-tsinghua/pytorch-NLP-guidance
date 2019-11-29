@@ -137,7 +137,7 @@ def tensors_from_pair(src_vocab, tgt_vocab, pair):
 
 class LSTM(nn.Module):
 
-    def __init__(self, input_size, hidden_size, dropout=0.6):
+    def __init__(self, input_size, hidden_size, dropout=0.2):
         super(LSTM, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -241,7 +241,7 @@ class AttnDecoderRNN(nn.Module):
     """the class for the decoder
     """
 
-    def __init__(self, hidden_size, output_size, dropout_p=0.7, max_length=MAX_LENGTH):
+    def __init__(self, hidden_size, output_size, dropout_p=0.2, max_length=MAX_LENGTH):
         super(AttnDecoderRNN, self).__init__()
         self.hidden_size = hidden_size
         self.output_size = output_size
@@ -500,7 +500,7 @@ def main():
         optimizer.load_state_dict(state['opt_state'])
 
     start = time.time()
-    print_loss_total = 0  # Reset every args.print_every
+    print_loss_total = 0.  # Reset every args.print_every
 
     while iter_num < args.n_iters:
         iter_num += 1
@@ -555,3 +555,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    
