@@ -1,0 +1,39 @@
+without attention
+2019-11-30 02:13:03,973 INFO time since start:5873.534140110016 (iter:50000 iter/n_iters:100%) loss_avg:19.0419
+> je ne fais pas erre@@ ur .
+= i m not mista@@ ken .
+< i m not perf@@ to . . . <EOS>
+
+> tu es fort comprehensi@@ ve .
+= you re very understanding .
+< you re very understanding . <EOS>
+
+2019-11-30 02:13:11,269 INFO Dev BLEU score: 0.21698
+input = on p@@ eu@@ t me faire confiance .
+output = i m afraid i a . . <EOS>
+input = j en suis contente .
+output = i m happy . <EOS>
+input = vous etes tres genti@@ ls .
+output = you re very open . <EOS>
+input = c est mon hero@@ s 
+output = he s my a . <EOS>
+
+with attention
+2019-11-30 16:26:14,908 INFO time since start:14661.80476975441 (iter:100000 iter/n_iters:100%) loss_avg:12.4040
+> j attends qu il re@@ vi@@ enne .
+= i m waiting for him to get back .
+< i m ex@@ to ting a come . . <EOS>
+
+> il n est pas la en ce moment .
+= he isn t here now .
+< he is not at home . <EOS>
+
+2019-11-30 16:26:24,128 INFO Dev BLEU score: 0.33
+input = on p@@ eu@@ t me faire confiance .
+output = i re being to love . . <EOS>
+input = j en suis contente .
+output = i m happy with it . <EOS>
+input = vous etes tres genti@@ ls .
+output = you re very nice . <EOS>
+input = c est mon hero@@ s 
+output = he is my brother ! <EOS>
