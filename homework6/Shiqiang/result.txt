@@ -1,0 +1,10 @@
+without attention
+2019-11-30 02:13:11,269 INFO Dev BLEU score: 0.21698
+input = on p@@ eu@@ t me faire confiance .
+output = i m afraid i a . . <EOS>
+input = j en suis contente .
+output = i m happy . <EOS>
+input = vous etes tres genti@@ ls .
+output = you re very open . <EOS>
+input = c est mon hero@@ s 
+output = he s my a . <EOS>
